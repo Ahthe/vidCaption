@@ -85,12 +85,12 @@ export const VideoInput = (props: VideoInputProps) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full sm:w-max rounded-md transition border-2 border-gray-300 border-dashed hover:border-tiktok-red focus:outline-none appearance-none cursor-pointer my-[10px] px-6 py-8">
+    <div className="flex flex-col justify-center items-center w-full sm:w-max rounded-md transition border-2 border-gray-300 border-dashed hover:border-vidcaption-red focus:outline-none appearance-none cursor-pointer my-[10px] px-6 py-8">
       <label className="cursor-pointer">
         <div className="flex flex-col items-center text-center">
-          <MdCloudUpload className="text-tiktok-gray h-[36px] w-[36px]" />
+          <MdCloudUpload className="text-vidcaption-gray h-[36px] w-[36px]" />
           <div className="font-bold mt-2">Select video to upload</div>
-          <div className="flex flex-col gap-1 items-center text-tiktok-gray text-[14px] mt-4">
+          <div className="flex flex-col gap-1 items-center text-vidcaption-gray text-[14px] mt-4">
             <span>MP4</span>
             <span>720x1280 resolution or higher</span>
             <span>Up to 5 minutes</span>
@@ -111,14 +111,14 @@ export const VideoInput = (props: VideoInputProps) => {
 
       {/* Error Message */}
       {uploadedVideo && (
-        <div className="mt-4 text-[14px] text-tiktok-red max-w-[180px] text-center">
+        <div className="mt-4 text-[14px] text-vidcaption-red max-w-[180px] text-center">
           File: {uploadedVideo.name}
         </div>
       )}
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="mt-4 text-[14px] text-tiktok-red font-bold max-w-[180px] text-center">
+        <div className="mt-4 text-[14px] text-vidcaption-red font-bold max-w-[180px] text-center">
           {errorMessage}
         </div>
       )}

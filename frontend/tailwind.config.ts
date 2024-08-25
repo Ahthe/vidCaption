@@ -14,11 +14,11 @@ const config: Config = {
         matteBlack: "#121212",
         matteBlackText: "#E5E5E5",
         matteBlackBorder: "#333333",
-        tiktok: {
-          blue: "#65D2E9",
-          red: "#E6436D",
-          primary: "#FE2C55",
-          "primary-hover": "#E4274C",
+        vidcaption: {
+          blue: "rgb(101, 233, 196)",
+          red: "rgb(67, 230, 199)",
+          primary: "rgb(44, 224, 254)",
+          "primary-hover": "rgb(44, 234, 254)",
           "light-gray": "#F1F1F2",
           gray: "#9EA0A5",
           black: "#161823",

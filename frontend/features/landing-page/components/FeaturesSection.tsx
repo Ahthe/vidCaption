@@ -76,7 +76,7 @@ export const FeaturesSection = () => {
 const FeaturesSectionHeader = () => {
   return (
     <>
-      <div className="font-bold text-[24px] text-tiktok-red mb-2">
+      <div className="font-bold text-[24px] text-vidcaption-red mb-2">
         VidCaption Accessibility Features
       </div>
       <div className="max-w-[750px] mb-24 flex flex-col gap-2">
@@ -87,12 +87,12 @@ const FeaturesSectionHeader = () => {
         </div>
         <div>
           These feature enhances accessibility for&nbsp;
-          <span className="text-tiktok-red">Social media content creators</span>,
+          <span className="text-vidcaption-red">Social media content creators</span>,
           ensuring they can create video content with animated captions&nbsp;
-          <span className="text-tiktok-red">Social Media audience</span>. Hence
+          <span className="text-vidcaption-red">Social Media audience</span>. Hence
           allowing, the audience to follow the video&apos;s content more
           easily&nbsp;
-          <span className="text-tiktok-red">
+          <span className="text-vidcaption-red">
             and saving the content creators time in adding captions manually
           </span>
           .

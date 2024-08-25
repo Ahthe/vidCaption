@@ -70,7 +70,7 @@ export const EditVidCaptionContainer = (props: EditVidCaptionContainerProps) => 
       {/* Captions */}
       <div className="flex flex-col gap-1">
         <div className="font-bold text-[18px]">Generated Captions</div>
-        <div className="text-tiktok-gray text-[14px]">
+        <div className="text-vidcaption-gray text-[14px]">
           Please check the auto-generated captions from Speech detected
           in the video (Please keep the formatting the same).
         </div>

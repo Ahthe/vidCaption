@@ -42,7 +42,7 @@ const HeroDescriptionSubtitle = () => {
 const HeroDescriptionTitle = () => {
   return (
     <div className="flex flex-col font-black text-[36px] sm:text-[42px] lg:text-[48px] mt-4">
-      <span className="text-tiktok-red">Video Captioning</span>
+      <span className="text-vidcaption-red">Video Captioning</span>
       <span className="-translate-y-0 sm:-translate-y-2">
         using AI
       </span>
@@ -57,7 +57,7 @@ const HeroDescriptionCTA = () => {
         Add captions to your videos with&nbsp;
         <Link
           href="/"
-          className="font-bold text-tiktok-blue underline underline-offset-2 cursor-pointer"
+          className="font-bold text-vidcaption-blue underline underline-offset-2 cursor-pointer"
         >
           vidCaption&apos;s AI-powered
         </Link>
@@ -87,7 +87,7 @@ const HeroNavArrow = () => {
   return (
     <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
       <FaArrowDown
-        className="w-6 h-6 text-tiktok-primary cursor-pointer animate-pulse hover:animate-none hover:scale-125 transition-all"
+        className="w-6 h-6 text-vidcaption-primary cursor-pointer animate-pulse hover:animate-none hover:scale-125 transition-all"
         onClick={() => {
           window.scrollTo({
             top: window.innerHeight - 70,
