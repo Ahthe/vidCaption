@@ -9,6 +9,11 @@ from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip, ImageCli
 from moviepy.video.tools.subtitles import SubtitlesClip
 from moviepy.video.VideoClip import TextClip
 from PIL import Image, ImageDraw, ImageFont
+import http.server
+import socketserver
+import cgi
+import os
+
 
 
 from moviepy.config import change_settings
@@ -17,10 +22,7 @@ change_settings({"IMAGEMAGICK_BINARY": r"ImageMagick-7.1.1-Q16-HDRI\magick.exe"}
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
-input_video = "input.mp4"
-input_video_name = input_video.replace(".mp4", "")
-
-def extract_audio():
+def extract_audio(input_video, input_video_name):
     extracted_audio = f"audio-{input_video_name}.wav"
     try:
         stream = ffmpeg.input(input_video)
@@ -89,7 +91,7 @@ def create_text_clip(text, size, fontsize=24, color="white", bg_color="black"):
 from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 import srt
 
-def create_animated_subtitles(video_path, subtitle_file):
+def create_animated_subtitles(input_video_name,video_path, subtitle_file):
     video = VideoFileClip(video_path)
     
     # Read the subtitle file
@@ -121,8 +123,11 @@ def create_animated_subtitles(video_path, subtitle_file):
     
     return output_path
 
-def run():
-    extracted_audio = extract_audio()
+def modify_file(input_video):
+    input_video = "input.mp4"
+    input_video_name = input_video.replace(".mp4", "")
+
+    extracted_audio = extract_audio(input_video, input_video_name)
     if extracted_audio:
         language, segments = transcribe(audio=extracted_audio)
         if language and segments:
@@ -130,12 +135,68 @@ def run():
                 language=language,
                 segments=segments
             )
-            animated_video = create_animated_subtitles(input_video, subtitle_file)
+            animated_video = create_animated_subtitles(input_video_name,input_video, subtitle_file)
             print(f"Animated video created: {animated_video}")
+            return subtitle_file, True
         else:
             print("Transcription failed.")
+            return "", False
     else:
         print("Audio extraction failed. Cannot proceed.")
+        return "", False
+
+
+# Configuration for directories
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+class SimpleHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def do_POST(self):
+        # Parse the form data posted
+        form = cgi.FieldStorage(fp=self.rfile, headers=self.headers,
+                                environ={'REQUEST_METHOD': 'POST'})
+        
+        # Check if file is uploaded
+        if 'file' not in form:
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(b"No file part in the request")
+            return
+        
+        # Retrieve the uploaded file
+        file_item = form['file']
+        
+        if file_item.filename:
+            # Secure filename
+            filename = os.path.basename(file_item.filename)
+            upload_path = os.path.join(UPLOAD_FOLDER, filename)
+            
+            # Save the file
+            with open(upload_path, 'wb') as f:
+                f.write(file_item.file.read())
+            
+            # Modify the file
+            modified_path = modify_file(upload_path)  # Assuming this modifies the file in place
+            
+            # Return the modified file
+            self.send_response(200)
+            self.send_header('Content-type', 'application/octet-stream')
+            self.send_header('Content-Disposition', f'attachment; filename="{filename}"')
+            self.end_headers()
+            
+            with open(modified_path, 'rb') as f:
+                self.wfile.write(f.read())
+        else:
+            self.send_response(400)
+            self.end_headers()
+            self.wfile.write(b"No file selected for uploading")
+
+def run(server_class=http.server.HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
+    server_address = ('', port)
+    httpd = server_class(server_address, handler_class)
+    print(f"Starting httpd on port {port}...")
+    httpd.serve_forever()
+
 
 if __name__ == "__main__":
     run()
