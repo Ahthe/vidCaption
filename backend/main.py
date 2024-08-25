@@ -14,7 +14,23 @@ def extract_audio():
     ffmpeg.run(stream, overwrite_output=True)
     return extracted_audio
 
+def transcribe(audio):
+    model = WhisperModel("small")
+    segments, info = model.transcribe(audio)
+    language = info[0]
+    print("Transcription language", info[0])
+    segments = list(segments)
+    for segment in segments:
+        # print(segment)
+        print("[%.2fs -> %.2fs] %s" %
+              (segment.start, segment.end, segment.text))
+    return language, segments
+
+
+
 def run():
 
     extracted_audio = extract_audio()
+
+    language, segments = transcribe(audio=extracted_audio)
 run()

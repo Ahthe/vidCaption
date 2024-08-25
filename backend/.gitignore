@@ -80,3 +80,6 @@ target/
 
 # pyenv
 .python-version
+
+#input
+input.mp4
