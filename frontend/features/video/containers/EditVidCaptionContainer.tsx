@@ -69,39 +69,8 @@ export const EditVidCaptionContainer = (props: EditVidCaptionContainerProps) => 
     <div>
       {/* Captions */}
       <div className="flex flex-col gap-1">
-        <div className="font-bold text-[18px]">Generated Captions</div>
-        <div className="text-vidcaption-gray text-[14px]">
-          Please check the auto-generated captions from Speech detected
-          in the video (Please keep the formatting the same).
-        </div>
-        <textarea
-          className="h-[200px] rounded-md border-2 border-gray-300 border-dashed focus:outline-none"
-          value={generatedCaptions}
-          onChange={(e) => {
-            setGeneratedCaptions(e.target.value);
-          }}
-          disabled={!uploadedVideo}
-        />
+        
       </div>
-
-      {/* Add-on VidCaption Features */}
-      <div className="flex flex-col gap-2 mt-4">
-        <div className="font-bold">Add-on VidCaption Features</div>
-
-        <VidCaptionFeatureCheckbox
-          label="Speech-to-Speech"
-          selectedDescription="A voice over based on the generated caption will be added to the video."
-          isSelected={isSignToSpeechFeatureSelected}
-          setIsSelected={setIsSignToSpeechFeatureSelected}
-        />
-        <VidCaptionFeatureCheckbox
-          label="Speech-to-Emoji"
-          selectedDescription="Selecting this option will emoji-fy the generated captions."
-          isSelected={isSignToEmojiFeatureSelected}
-          setIsSelected={setIsSignToEmojiFeatureSelected}
-        />
-      </div>
-
       <div className="flex gap-2 mt-6">
         <Button variant="outline" onClick={() => router.push("/")}>
           Discard

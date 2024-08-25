@@ -17,7 +17,7 @@ export const NavbarLinks = () => {
         <FaPlus />
         Upload
       </Button>
-      <Button title="Discover VidCaption" onClick={() => router.push("/")}>
+      <Button title="Discover" onClick={() => router.push("/")}>
         VidCaption
       </Button>
     </div>
