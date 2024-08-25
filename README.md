@@ -1,6 +1,6 @@
 # vidCaption
 
-[Click to watch Demo](https://www.youtube.com/watch?v=1Ssr9EpWPkI)
+[Click to watch Demo (Skip to 3:05 to see the animated captions on a generated video)](https://www.youtube.com/watch?v=1Ssr9EpWPkI)
 
 ## Pictures
 
