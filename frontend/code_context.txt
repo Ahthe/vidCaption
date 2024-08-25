@@ -45,6 +45,7 @@ export default function Upload() {
 }
 
 // File: common/components/Button.tsx
+// File: common/components/Button.tsx
 import React from "react";
 
 export interface ButtonProps
@@ -74,11 +75,11 @@ export const Button = (props: ButtonProps) => {
   switch (variant) {
     case "primary":
       variantStyle =
-        "bg-vidcaption-primary text-white font-bold hover:bg-vidcaption-primary-hover";
+        "bg-vidcaption-primary text-white font-bold hover:bg-vidcaption-primaryHover";
       break;
     case "outline":
       variantStyle =
-        "border border-gray-200 font-bold text-vidcaption-black hover:text-white hover:bg-vidcaption-primary hover-border-vidcaption-primary";
+        "border border-matteBlackBorder font-bold text-matteBlackText hover:text-white hover:bg-vidcaption-primary hover:border-vidcaption-primary";
       break;
   }
 
@@ -124,6 +125,9 @@ export const roboto = Roboto({
 @tailwind components;
 @tailwind utilities;
 
+body {
+    @apply bg-matteBlack text-matteBlackText;
+}
 // File: common/utils/customFetch.ts
 import { serverDomainUrl } from "./serverDomainUrl";
 
@@ -638,6 +642,7 @@ export { NavbarLogo } from "./NavbarLogo";
 export { NavbarLinks } from "./NavbarLinks";
 
 // File: features/layout/containers/AppLayout.tsx
+// File: features/layout/containers/AppLayout.tsx
 "use client";
 
 import { metrophobic } from "@common/styles/fonts";
@@ -653,7 +658,7 @@ export const AppLayout = (props: AppLayoutProps) => {
   const { children } = props;
 
   return (
-    <body className={"flex flex-col " + metrophobic.className}>
+    <body className={"flex flex-col bg-matteBlack text-matteBlackText " + metrophobic.className}>
       <Toaster />
 
       <Navbar />
@@ -664,13 +669,13 @@ export const AppLayout = (props: AppLayoutProps) => {
 };
 
 // File: features/layout/containers/Navbar.tsx
+// File: features/layout/containers/Navbar.tsx
 import React from "react";
 import { NavbarLinks, NavbarLogo } from "../components";
-import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
   return (
-    <nav className="sticky top-0 z-50 flex flex-row items-center justify-between px-4 py-4 sm:px-6 sm:py-4 border-b border-b-vidcaption-light-gray bg-white shadow-sm">
+    <nav className="sticky top-0 z-50 flex flex-row items-center justify-between px-4 py-4 sm:px-6 sm:py-4 border-b bg-matteBlack border-matteBlackBorder shadow-sm">
       <NavbarLogo />
       <NavbarLinks />
     </nav>
