@@ -11,6 +11,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        matteBlack: "#121212",
+        matteBlackText: "#E5E5E5",
+        matteBlackBorder: "#333333",
         tiktok: {
           blue: "#65D2E9",
           red: "#E6436D",

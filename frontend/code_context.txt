@@ -1,0 +1,1210 @@
+// File: app/layout.tsx
+import type { Metadata } from "next";
+import "@common/styles/globals.css";
+import { AppLayout } from "@features/layout/containers";
+
+export const metadata: Metadata = {
+  title: "vidCaption",
+  description: "Caption adding to videos",
+  icons: "./logo192.png",
+  manifest: "./manifest.json",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <AppLayout>{children}</AppLayout>
+    </html>
+  );
+}
+
+// File: app/page.tsx
+import { LandingPageContainer } from "@features/landing-page/containers";
+
+export default function Home() {
+  return (
+    <main>
+      <LandingPageContainer />
+    </main>
+  );
+}
+
+// File: app/upload/page.tsx
+import { VidCaptionVideoContainer } from "@features/video/containers";
+
+export default function Upload() {
+  return (
+    <div>
+      <VidCaptionVideoContainer />
+    </div>
+  );
+}
+
+// File: common/components/Button.tsx
+import React from "react";
+
+export interface ButtonProps
+  extends React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
+  variant?: "primary" | "outline";
+  size?: "sm" | "md" | "lg";
+  type?: "button" | "reset" | "submit";
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export const Button = (props: ButtonProps) => {
+  const {
+    variant = "primary",
+    size = "md",
+    type = "button",
+    className,
+    children,
+    ...htmlButtonProps
+  } = props;
+
+  // Variant
+  let variantStyle = "";
+  switch (variant) {
+    case "primary":
+      variantStyle =
+        "bg-tiktok-primary text-white font-bold hover:bg-tiktok-primary-hover";
+      break;
+    case "outline":
+      variantStyle =
+        "border border-gray-200 font-bold text-tiktok-black hover:text-white hover:bg-tiktok-primary hover-border-tiktok-primary";
+      break;
+  }
+
+  // Size
+  let sizeStyle = "";
+  switch (size) {
+    case "lg":
+      sizeStyle = "px-[32px] py-[6px] text-[18px]";
+      break;
+    case "md":
+      sizeStyle = "px-[28px] py-[6px] text-[16px]";
+      break;
+    case "sm":
+      sizeStyle = "px-[24px] py-[6px] text-[14px]";
+      break;
+  }
+
+  return (
+    <button
+      type={type}
+      className={`flex flex-row justify-center items-center gap-2 rounded ${variantStyle} ${sizeStyle} ${className}`}
+      {...htmlButtonProps}
+    >
+      {children}
+    </button>
+  );
+};
+
+// File: common/components/index.ts
+export { Button } from "./Button";
+
+// File: common/styles/fonts.ts
+import { Metrophobic, Roboto } from "next/font/google";
+
+export const metrophobic = Metrophobic({ subsets: ["latin"], weight: ["400"] });
+export const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+});
+
+// File: common/styles/globals.css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// File: common/utils/customFetch.ts
+import { serverDomainUrl } from "./serverDomainUrl";
+
+// Helper functions
+const handleResponse = async (response: Response) => {
+  if (response.ok) return response.json();
+
+  // Status not ok
+  try {
+    const data = await response.json();
+    return Promise.reject(data || response.status);
+  } catch {
+    // Could not parse the JSON
+    return Promise.reject(response.status);
+  }
+};
+
+// Custom fetch hook
+const customFetch = () => {
+  const get = async (url: string) => {
+    const requestOptions: RequestInit = {
+      method: "GET",
+      credentials: "include",
+    };
+    const response = await fetch(serverDomainUrl + url, requestOptions);
+    return handleResponse(response);
+  };
+
+  const post = async (url: string, body: any, bodyType: "json" | "form") => {
+    if (bodyType === "json") {
+      const requestOptions: RequestInit = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(body),
+      };
+      const response = await fetch(serverDomainUrl + url, requestOptions);
+      return handleResponse(response);
+    } else if (bodyType === "form") {
+      const requestOptions: RequestInit = {
+        method: "POST",
+        credentials: "include",
+        body: body as FormData,
+      };
+      const response = await fetch(serverDomainUrl + url, requestOptions);
+      return handleResponse(response);
+    }
+  };
+
+  const put = async (url: string, body: any) => {
+    const requestOptions: RequestInit = {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    };
+    const response = await fetch(serverDomainUrl + url, requestOptions);
+    return handleResponse(response);
+  };
+
+  // prefixed with underscored because delete is a reserved word in javascript
+  const _delete = async (url: string) => {
+    const requestOptions: RequestInit = {
+      method: "DELETE",
+      credentials: "include",
+    };
+    const response = await fetch(serverDomainUrl + url, requestOptions);
+    return handleResponse(response);
+  };
+
+  const _delete_with_req_body = async (url: string, body: any) => {
+    const requestOptions: RequestInit = {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    };
+    const response = await fetch(serverDomainUrl + url, requestOptions);
+    return handleResponse(response);
+  };
+
+  const generate_video = async (body: any, bodyType: "form") => {
+    const requestOptions: RequestInit = {
+      method: "POST",
+      credentials: "include",
+      body: body as FormData,
+    };
+    const response = await fetch(serverDomainUrl + "/generate", requestOptions);
+    if (response.ok) {
+      const generatedVideoBlob = await response.blob();
+      return generatedVideoBlob;
+    }
+
+    // Status not ok
+    return Promise.reject(response.status);
+  };
+
+  const retrieve_video = async (url: string) => {
+    const requestOptions: RequestInit = {
+      method: "GET",
+      credentials: "include",
+    };
+    const response = await fetch(serverDomainUrl + url, requestOptions);
+    if (response.ok) {
+      const generatedVideoBlob = await response.blob();
+      return generatedVideoBlob;
+    }
+
+    // Status not ok
+    return Promise.reject(response.status);
+  };
+
+  const retrieve_image = async (file_path: string) => {
+    const requestOptions: RequestInit = {
+      method: "POST",
+      credentials: "include",
+    };
+    const response = await fetch(
+      serverDomainUrl + `/file/retrieve?file_path=${file_path}`,
+      requestOptions
+    );
+    if (response.ok) {
+      const imageBlob = await response.blob();
+      const imageUrl = URL.createObjectURL(imageBlob);
+      return imageUrl;
+    }
+
+    // Status not ok
+    return Promise.reject(response.status);
+  };
+
+  return {
+    get,
+    post,
+    put,
+    _delete,
+    _delete_with_req_body,
+    generate_video,
+    retrieve_video,
+    retrieve_image,
+  };
+};
+
+export default customFetch;
+
+// File: common/utils/serverDomainUrl.ts
+export const serverDomainUrl =
+  process.env.NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_PRODUCTION_SERVER_URL
+    : "http://127.0.0.1:8000";
+
+// File: features/landing-page/components/CommitmentSection.tsx
+import React from "react";
+
+export const CommitmentSection = () => {
+  return (
+    <div className="px-6 md:px-24 flex flex-col items-center mb-12">
+      <div className="font-bold text-center text-[36px] md:text-[64px] mb-2">
+        
+      </div>
+      <div>
+        
+      </div>
+    </div>
+  );
+};
+
+// File: features/landing-page/components/FeaturesSection.tsx
+import { Button } from "@common/components";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+
+export const FeaturesSection = () => {
+  const features: SingleFeatureProps[] = [
+    {
+      img: {
+        src: "/assets/speech-to-text-card.png",
+        alt: "photo",
+        left: true,
+      },
+      title: "Speech-to-Text 📑",
+      descriptions: [
+        "Speech-to-Text converts speech to text captions as Speech appears in the video.",
+        "Speech-to-Text can be added during video editing by selecting the video, then choosing “Speech to Text Caption”.",
+        "Available in select countries with more to follow.",
+      ],
+    },
+    {
+      img: {
+        src: "/assets/speech-to-speech-card.png",
+        alt: "photo",
+        left: false,
+      },
+      title: "Speech-to-Speech 🔊",
+      descriptions: [
+        "Speech-to-Speech converts Speech to a voiceover that plays over the video as the Speech appears in the video.",
+        "Options for Voice-over can be customised - Gender, Language, etc.",
+        "Speech-to-Text can be added during video editing by selecting the video, then choosing “Speech to Speech”.",
+        "Available in select countries with more to follow.",
+      ],
+    },
+    {
+      img: {
+        src: "/assets/speech-to-emoji-card.png",
+        alt: "photo",
+        left: true,
+      },
+      title: "Speech-to-Emoji 👋🏻",
+      descriptions: [
+        "Speech-to-Emoji converts Speech to emoji text captions as the Speech appears in the video.",
+        "Speech-to-Emoji can be added during video editing by selecting the video, then choosing “Speech to Emoji”.",
+        "Available in select countries with more to follow.",
+      ],
+    },
+  ];
+
+  return (
+    <div className="px-6 md:px-24 flex flex-col items-center mb-12">
+      <FeaturesSectionHeader />
+
+      <div className="flex flex-col gap-16">
+        {features.map((feature) => (
+          <SingleFeature
+            key={feature.title}
+            img={{
+              src: feature.img.src,
+              alt: feature.img.alt,
+              left: feature.img.left,
+            }}
+            title={feature.title}
+            descriptions={feature.descriptions}
+          />
+        ))}
+      </div>
+
+      <Button variant="outline" className="!w-full mt-12">
+        <Link href="/upload">Try Now</Link>
+      </Button>
+    </div>
+  );
+};
+
+const FeaturesSectionHeader = () => {
+  return (
+    <>
+      <div className="font-bold text-[24px] text-tiktok-red mb-2">
+        VidCaption Accessibility Features
+      </div>
+      <div className="max-w-[750px] mb-24 flex flex-col gap-2">
+        <div>
+          Thank you for joining us on our journey as we make video creation more
+          accessible for all. Below are some of the features we&apos;ve launched
+          with accessibility in mind.
+        </div>
+        <div>
+          These feature enhances accessibility for&nbsp;
+          <span className="text-tiktok-red">Social media content creators</span>,
+          ensuring they can create video content with animated captions&nbsp;
+          <span className="text-tiktok-red">Social Media audience</span>. Hence
+          allowing, the audience to follow the video&apos;s content more
+          easily&nbsp;
+          <span className="text-tiktok-red">
+            and saving the content creators time in adding captions manually
+          </span>
+          .
+        </div>
+      </div>
+    </>
+  );
+};
+
+interface SingleFeatureProps {
+  img: {
+    src: string;
+    alt: string;
+    left: boolean;
+  };
+  title: string;
+  descriptions: string[];
+}
+
+const SingleFeature = (props: SingleFeatureProps) => {
+  const { img, title, descriptions } = props;
+
+  const FeatureImage = () => {
+    return (
+      <div className="relative h-[350px] w-full lg:w-1/2">
+        <Image
+          src={img.src}
+          alt={img.alt}
+          fill
+          className="rounded-2xl object-cover"
+        />
+      </div>
+    );
+  };
+
+  const FeatureText = () => {
+    return (
+      <div className="flex flex-col gap-4 w-full lg:w-1/2">
+        <div className="font-bold text-[32px]">{title}</div>
+        <div className="flex flex-col gap-2">
+          {descriptions.map((d) => (
+            <span key={d}>{d}</span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      {/* larger Screen */}
+      <div className="hidden lg:flex flex-row items-center gap-12 w-full">
+        {/* Left Image */}
+        {img.left && <FeatureImage />}
+
+        {/* Text */}
+        <FeatureText />
+
+        {/* Right Image */}
+        {!img.left && <FeatureImage />}
+      </div>
+
+      {/* Smaller Screen */}
+      <div className="lg:hidden flex flex-col items-center gap-6 w-full">
+        {/* Image */}
+        <FeatureImage />
+
+        {/* Text */}
+        <FeatureText />
+      </div>
+    </>
+  );
+};
+
+// File: features/landing-page/components/Hero.tsx
+"use client";
+
+import { Button } from "@common/components";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { FaArrowDown } from "react-icons/fa6";
+
+export const Hero = () => {
+  return (
+    <section className="h-[calc(100vh-71px)] flex justify-center items-center">
+      <div className="flex gap-8 justify-between items-center px-8 sm:px-12 md:px-16 lg:px-24 transition-all">
+        <HeroDescription />
+        <HeroImage />
+        <HeroNavArrow />
+      </div>
+    </section>
+  );
+};
+
+const HeroDescription = () => {
+  return (
+    <div className="flex flex-col">
+      <HeroDescriptionSubtitle />
+      <HeroDescriptionTitle />
+      <HeroDescriptionCTA />
+    </div>
+  );
+};
+
+const HeroDescriptionSubtitle = () => {
+  return (
+    <div className="flex items-center gap-2">
+      <hr className="w-[40px] sm:w-[75px] border-blue border-[2px]" />
+      <span className="font-semibold text-[16px] sm:text-[20px]">
+        <span className="green">vidCaption</span>
+      </span>
+    </div>
+  );
+};
+
+const HeroDescriptionTitle = () => {
+  return (
+    <div className="flex flex-col font-black text-[36px] sm:text-[42px] lg:text-[48px] mt-4">
+      <span className="text-tiktok-red">Video Captioning</span>
+      <span className="-translate-y-0 sm:-translate-y-2">
+        using AI
+      </span>
+    </div>
+  );
+};
+
+const HeroDescriptionCTA = () => {
+  return (
+    <div className="flex flex-col gap-6 mt-4">
+      <div className="text-[18px] sm:text-[20px]">
+        Add captions to your videos with&nbsp;
+        <Link
+          href="/"
+          className="font-bold text-tiktok-blue underline underline-offset-2 cursor-pointer"
+        >
+          vidCaption&apos;s AI-powered
+        </Link>
+        &nbsp; caption generation. 
+      </div>
+
+      <Button className="w-max">
+        <Link href="/upload">Try Now</Link>
+      </Button>
+    </div>
+  );
+};
+
+const HeroImage = () => {
+  return (
+    <Image
+      src="/app-logo.png"
+      alt="hero image"
+      width={450}
+      height={450}
+      className="hidden lg:block"
+    />
+  );
+};
+
+const HeroNavArrow = () => {
+  return (
+    <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+      <FaArrowDown
+        className="w-6 h-6 text-tiktok-primary cursor-pointer animate-pulse hover:animate-none hover:scale-125 transition-all"
+        onClick={() => {
+          window.scrollTo({
+            top: window.innerHeight - 70,
+            left: 0,
+            behavior: "smooth",
+          });
+        }}
+      />
+    </div>
+  );
+};
+
+// File: features/landing-page/components/index.ts
+export { Hero } from "./Hero";
+export { CommitmentSection } from "./CommitmentSection";
+export { FeaturesSection } from "./FeaturesSection";
+
+// File: features/landing-page/containers/LandingPageContainer.tsx
+import React from "react";
+import { Hero, CommitmentSection, FeaturesSection } from "../components";
+
+export const LandingPageContainer = () => {
+  return (
+    <div className="flex justify-center">
+      <div className="max-w-[1500px]">
+        <Hero />
+        <CommitmentSection />
+        <FeaturesSection />
+      </div>
+    </div>
+  );
+};
+
+// File: features/landing-page/containers/index.ts
+export { LandingPageContainer } from "./LandingPageContainer";
+
+// File: features/layout/components/NavbarLinks.tsx
+import { Button } from "@common/components";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { FaPlus } from "react-icons/fa6";
+
+export const NavbarLinks = () => {
+  const router = useRouter();
+
+  return (
+    <div className="flex gap-4">
+      <Button
+        title="Upload"
+        variant="outline"
+        className="!px-[18px]"
+        onClick={() => router.push("/upload")}
+      >
+        <FaPlus />
+        Upload
+      </Button>
+      <Button title="Discover VidCaption" onClick={() => router.push("/")}>
+        VidCaption
+      </Button>
+    </div>
+  );
+};
+
+// File: features/layout/components/NavbarLogo.tsx
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React from "react";
+
+export const NavbarLogo = () => {
+  const router = useRouter();
+
+  return (
+    <div
+      className="relative w-[92px] sm:w-[130px] h-[38px] cursor-pointer"
+      onClick={() => router.push("/")}
+    >
+      <Image src="/assets/vidcaption-logo-text.svg" alt="VidCaption Logo" fill />
+    </div>
+  );
+};
+
+// File: features/layout/components/index.ts
+export { NavbarLogo } from "./NavbarLogo";
+export { NavbarLinks } from "./NavbarLinks";
+
+// File: features/layout/containers/AppLayout.tsx
+"use client";
+
+import { metrophobic } from "@common/styles/fonts";
+import React from "react";
+import { Toaster } from "react-hot-toast";
+import { Navbar } from "./Navbar";
+
+interface AppLayoutProps {
+  children: React.ReactNode;
+}
+
+export const AppLayout = (props: AppLayoutProps) => {
+  const { children } = props;
+
+  return (
+    <body className={"flex flex-col " + metrophobic.className}>
+      <Toaster />
+
+      <Navbar />
+
+      <main>{children}</main>
+    </body>
+  );
+};
+
+// File: features/layout/containers/Navbar.tsx
+import React from "react";
+import { NavbarLinks, NavbarLogo } from "../components";
+import { useRouter } from "next/navigation";
+
+export const Navbar = () => {
+  return (
+    <nav className="sticky top-0 z-50 flex flex-row items-center justify-between px-4 py-4 sm:px-6 sm:py-4 border-b border-b-tiktok-light-gray bg-white shadow-sm">
+      <NavbarLogo />
+      <NavbarLinks />
+    </nav>
+  );
+};
+
+// File: features/layout/containers/index.ts
+export { AppLayout } from "./AppLayout";
+
+// File: features/video/components/VidCaptionFeatureCheckbox.tsx
+"use client";
+
+import React from "react";
+import { FaCheck } from "react-icons/fa";
+
+interface VidCaptionFeatureCheckboxProps {
+  label: string;
+  selectedDescription?: string;
+  isSelected: boolean;
+  setIsSelected: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const VidCaptionFeatureCheckbox = (props: VidCaptionFeatureCheckboxProps) => {
+  const { label, selectedDescription, isSelected, setIsSelected } = props;
+
+  return (
+    <div className="flex flex-col">
+      {/* Checkbox */}
+      <div
+        className="flex gap-2 items-center w-max cursor-pointer"
+        onClick={() => setIsSelected((prev) => !prev)}
+      >
+        <div
+          className={`flex justify-center items-center w-4 h-4 rounded-sm border border-tiktok-red ${isSelected && "bg-tiktok-red"}`}
+        >
+          {isSelected && <FaCheck className="text-white w-3 h-3" />}
+        </div>
+        <span>{label}</span>
+      </div>
+
+      {/* Description */}
+      {selectedDescription && isSelected && (
+        <div className="text-tiktok-red text-[14px]">
+          *{selectedDescription}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// File: features/video/components/VidCaptionVideoContainerHeader.tsx
+import React from "react";
+
+export const VidCaptionVideoContainerHeader = () => {
+  return (
+    <div className="flex flex-col gap-1 mb-8">
+      <div className="font-bold text-[24px]">
+        Upload Video <span className="text-tiktok-red">(VidCaption)</span>
+      </div>
+      <div className="text-tiktok-gray">
+        Create subttiles for your videos with VidCaptions&apos;s AI-powered caption generation.
+      </div>
+    </div>
+  );
+
+  // Old
+  // return (
+  //   <div className="max-w-[500px] text-center flex flex-col gap-2 mb-8">
+  //     <div className="font-bold text-tiktok-red text-[36px] md:text-[48px]">
+  //       VidCaption
+  //     </div>
+  //     <div>
+  //       Create subttiles for your videos with
+  //       animations easily with&nbsp;
+  //       <span className="text-tiktok-red font-bold">
+  //         VidCaption&apos;s AI-powered caption generation.
+  //       </span>
+  //     </div>
+  //     <div>
+  //       <div>1. Speech-to-Text 📑</div>
+  //       <div>2. Speech-to-Speech 🔊</div>
+  //       <div>3. Speech-to-Emoji 👋🏻</div>
+  //     </div>
+  //   </div>
+  // );
+};
+
+// File: features/video/components/VideoInput.tsx
+"use client";
+
+import customFetch from "@common/utils/customFetch";
+import React, { useState, useRef } from "react";
+import toast from "react-hot-toast";
+import { MdCloudUpload } from "react-icons/md";
+import { VideoUploadResponseSchema } from "../schemas";
+import { Button } from "@common/components";
+import useDownloader from "react-use-downloader";
+
+interface VideoInputProps {
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  uploadedVideo: File | null;
+  setUploadedVideo: React.Dispatch<React.SetStateAction<File | null>>;
+  setGeneratedCaptions: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const VideoInput = (props: VideoInputProps) => {
+  const {
+    setIsLoading,
+    uploadedVideo,
+    setUploadedVideo,
+    setGeneratedCaptions,
+  } = props;
+
+  const fetch = customFetch();
+  const acceptedfileTypes = ["video/mp4", "video/mpeg"];
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleFileChange = async (event: any) => {
+    event.preventDefault();
+    const selectedFile = event.target.files && event.target.files[0];
+
+    if (!selectedFile)
+      return setErrorMessage("Please select a video file (.mp4)!");
+
+    if (!acceptedfileTypes.includes(selectedFile.type)) {
+      toast.error("File format not accepted!");
+      setErrorMessage("Please upload valid video format (.mp4)!");
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Call the API to upload the video
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response: VideoUploadResponseSchema = await fetch.post(
+        "/upload",
+        formData,
+        "form"
+      );
+      setGeneratedCaptions(response.captions);
+      setErrorMessage("");
+
+      console.log("File uploaded successfully:", response);
+      toast.success("Video uploaded successfully!");
+
+      setUploadedVideo(selectedFile);
+    } catch (error: any) {
+      console.error("Error uploading file:", error);
+      toast.error("Failed to upload video!");
+      toast.error(error.detail);
+
+      setUploadedVideo(null);
+    }
+
+    setIsLoading(false);
+  };
+
+  const { download, error } = useDownloader();
+  const handleUseDemoVideoInput = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    const demoVideoBlob = await fetch.retrieve_video("/get_demo_video_input");
+    const demoVideoObjectUrl = URL.createObjectURL(demoVideoBlob);
+    download(demoVideoObjectUrl, "vidcaption-demo-input.mp4");
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center w-full sm:w-max rounded-md transition border-2 border-gray-300 border-dashed hover:border-tiktok-red focus:outline-none appearance-none cursor-pointer my-[10px] px-6 py-8">
+      <label className="cursor-pointer">
+        <div className="flex flex-col items-center text-center">
+          <MdCloudUpload className="text-tiktok-gray h-[36px] w-[36px]" />
+          <div className="font-bold mt-2">Select video to upload</div>
+          <div className="flex flex-col gap-1 items-center text-tiktok-gray text-[14px] mt-4">
+            <span>MP4</span>
+            <span>720x1280 resolution or higher</span>
+            <span>Up to 5 minutes</span>
+            <span>Less than 2GB</span>
+          </div>
+        </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          name="file_upload"
+          className="hidden"
+          onChange={(event) => {
+            event.persist();
+            handleFileChange(event);
+          }}
+        />
+      </label>
+
+      {/* Error Message */}
+      {uploadedVideo && (
+        <div className="mt-4 text-[14px] text-tiktok-red max-w-[180px] text-center">
+          File: {uploadedVideo.name}
+        </div>
+      )}
+
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="mt-4 text-[14px] text-tiktok-red font-bold max-w-[180px] text-center">
+          {errorMessage}
+        </div>
+      )}
+
+      <Button
+        variant="outline"
+        size="sm"
+        className="mt-4"
+        type="button"
+        onClick={handleUseDemoVideoInput}
+      >
+        Download Demo Video Input
+      </Button>
+    </div>
+  );
+};
+
+// File: features/video/components/VideoUploadSpinner.tsx
+import React from "react";
+import { FaSpinner } from "react-icons/fa6";
+
+export const VideoUploadSpinner = () => {
+  return (
+    <>
+      <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-tiktok-light-gray opacity-60"></div>
+      <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
+        <span className="text-tiktok-red font-bold animate-pulse">
+          Uploading file and generating captions...
+        </span>
+        <FaSpinner className="text-[32px] text-tiktok-red animate-spin" />
+      </div>
+    </>
+  );
+};
+
+// File: features/video/components/index.ts
+export { VidCaptionVideoContainerHeader } from "./VidCaptionVideoContainerHeader";
+export { VideoInput } from "./VideoInput";
+export { VidCaptionFeatureCheckbox } from "./VidCaptionFeatureCheckbox";
+export { VideoUploadSpinner } from "./VideoUploadSpinner";
+
+// File: features/video/containers/EditVidCaptionContainer.tsx
+import React, { useState } from "react";
+import { VidCaptionFeatureCheckbox } from "../components";
+import { Button } from "@common/components";
+import { useRouter } from "next/navigation";
+import customFetch from "@common/utils/customFetch";
+import toast from "react-hot-toast";
+
+interface EditVidCaptionContainerProps {
+  uploadedVideo: File | null;
+  setGeneratedVideo: React.Dispatch<React.SetStateAction<Blob | null>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  generatedCaptions: string;
+  setGeneratedCaptions: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const EditVidCaptionContainer = (props: EditVidCaptionContainerProps) => {
+  const {
+    uploadedVideo,
+    setGeneratedVideo,
+    setIsLoading,
+    generatedCaptions,
+    setGeneratedCaptions,
+  } = props;
+
+  const router = useRouter();
+  const fetch = customFetch();
+
+  const [isSignToSpeechFeatureSelected, setIsSignToSpeechFeatureSelected] =
+    useState(false);
+  const [isSignToEmojiFeatureSelected, setIsSignToEmojiFeatureSelected] =
+    useState(false);
+
+  const handleOnConfirmVidCaptionGeneration = async () => {
+    if (!uploadedVideo) return toast.error("Please upload a video!");
+
+    setIsLoading(true);
+
+    // Call the API to generate the edited video
+    const features = {
+      sign_to_speech: {
+        selected: isSignToSpeechFeatureSelected,
+      },
+      sign_to_emoji: {
+        selected: isSignToEmojiFeatureSelected,
+      },
+    };
+    const formData = new FormData();
+    formData.append("file", uploadedVideo);
+    formData.append("captions", generatedCaptions);
+    formData.append("features", JSON.stringify(features));
+
+    try {
+      const generatedVideoBlob = await fetch.generate_video(formData, "form");
+      setGeneratedVideo(generatedVideoBlob);
+
+      console.log("Video generated successfully:", generatedVideoBlob);
+      toast.success("Video generated!");
+    } catch (error) {
+      console.error("Error generating video:", error);
+      toast.error("Failed to generate video!");
+
+      setGeneratedVideo(null);
+    }
+
+    setIsLoading(false);
+  };
+
+  return (
+    <div>
+      {/* Captions */}
+      <div className="flex flex-col gap-1">
+        <div className="font-bold text-[18px]">Generated Captions</div>
+        <div className="text-tiktok-gray text-[14px]">
+          Please check the auto-generated captions from Speech detected
+          in the video (Please keep the formatting the same).
+        </div>
+        <textarea
+          className="h-[200px] rounded-md border-2 border-gray-300 border-dashed focus:outline-none"
+          value={generatedCaptions}
+          onChange={(e) => {
+            setGeneratedCaptions(e.target.value);
+          }}
+          disabled={!uploadedVideo}
+        />
+      </div>
+
+      {/* Add-on VidCaption Features */}
+      <div className="flex flex-col gap-2 mt-4">
+        <div className="font-bold">Add-on VidCaption Features</div>
+
+        <VidCaptionFeatureCheckbox
+          label="Speech-to-Speech"
+          selectedDescription="A voice over based on the generated caption will be added to the video."
+          isSelected={isSignToSpeechFeatureSelected}
+          setIsSelected={setIsSignToSpeechFeatureSelected}
+        />
+        <VidCaptionFeatureCheckbox
+          label="Speech-to-Emoji"
+          selectedDescription="Selecting this option will emoji-fy the generated captions."
+          isSelected={isSignToEmojiFeatureSelected}
+          setIsSelected={setIsSignToEmojiFeatureSelected}
+        />
+      </div>
+
+      <div className="flex gap-2 mt-6">
+        <Button variant="outline" onClick={() => router.push("/")}>
+          Discard
+        </Button>
+        <Button onClick={handleOnConfirmVidCaptionGeneration}>Confirm</Button>
+      </div>
+    </div>
+  );
+};
+
+// File: features/video/containers/GeneratedVideoContainer.tsx
+"use client";
+
+import { Button } from "@common/components";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import useDownloader from "react-use-downloader";
+
+interface GeneratedVideoContainerProps {
+  originalVideo: File;
+  generatedVideo: Blob;
+}
+
+export const GeneratedVideoContainer = (
+  props: GeneratedVideoContainerProps
+) => {
+  const { originalVideo, generatedVideo } = props;
+
+  const [originalVideoSource, setOriginalVideoSource] = useState("");
+  const [generatedVideoSource, setGeneratedVideoSource] = useState("");
+  const [generatedVideoObjectUrl, setGeneratedVideoObjectUrl] = useState("");
+
+  useEffect(() => {
+    const originalVideoObjectUrl = URL.createObjectURL(originalVideo);
+    setOriginalVideoSource(originalVideoObjectUrl);
+
+    const generatedVideoObjectUrl = URL.createObjectURL(generatedVideo);
+    setGeneratedVideoSource(generatedVideoObjectUrl);
+    setGeneratedVideoObjectUrl(generatedVideoObjectUrl);
+
+    return () => {
+      URL.revokeObjectURL(generatedVideoObjectUrl);
+      URL.revokeObjectURL(generatedVideoObjectUrl);
+    };
+  }, [originalVideo, generatedVideo]);
+
+  const { download, error } = useDownloader();
+  const handleDownloadGeneratedVideo = () => {
+    const fileExtension = originalVideo.type.split("/")[1];
+    const fileName = `${originalVideo.name.split(".")[0]}-VidCaption.${fileExtension}`;
+    download(generatedVideoObjectUrl, fileName);
+  };
+
+  useEffect(() => {
+    if (error) toast.error("Failed to download video");
+  }, [error]);
+
+  return (
+    <div className="flex flex-col gap-12">
+      {/* Edited Video */}
+      <div className="flex flex-col gap-2">
+        <div className="font-bold text-[24px]">- Generated Video -</div>
+        {generatedVideoSource && (
+          <video
+            className="VideoInput_video"
+            width="100%"
+            height={350}
+            controls
+            src={generatedVideoSource}
+          />
+        )}
+
+        {/* Download Edited Video */}
+        <Button variant="primary" onClick={handleDownloadGeneratedVideo}>
+          Download Generated Video
+        </Button>
+      </div>
+
+      {/* Original Video */}
+      <div className="flex flex-col gap-2">
+        <div className="font-bold text-[24px]">- Original Video -</div>
+        {originalVideoSource && (
+          <video
+            className="VideoInput_video"
+            width="100%"
+            height={350}
+            controls
+            src={originalVideoSource}
+          />
+        )}
+      </div>
+    </div>
+  );
+};
+
+// File: features/video/containers/UploadVideoContainer.tsx
+"use client";
+
+import React, { useState } from "react";
+import { VideoInput, VideoUploadSpinner } from "../components";
+import { EditVidCaptionContainer } from "./EditVidCaptionContainer";
+
+interface UploadVideoContainerProps {
+  uploadedVideo: File | null;
+  setUploadedVideo: React.Dispatch<React.SetStateAction<File | null>>;
+  setGeneratedVideo: React.Dispatch<React.SetStateAction<Blob | null>>;
+}
+
+export const UploadVideoContainer = (props: UploadVideoContainerProps) => {
+  const { uploadedVideo, setUploadedVideo, setGeneratedVideo } = props;
+
+  const [generatedCaptions, setGeneratedCaptions] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  return (
+    <>
+      <div className="flex flex-col justify-center items-center sm:flex-row sm:justify-start sm:items-start gap-8">
+        <VideoInput
+          setIsLoading={setIsLoading}
+          uploadedVideo={uploadedVideo}
+          setUploadedVideo={setUploadedVideo}
+          setGeneratedCaptions={setGeneratedCaptions}
+        />
+        <EditVidCaptionContainer
+          uploadedVideo={uploadedVideo}
+          setGeneratedVideo={setGeneratedVideo}
+          setIsLoading={setIsLoading}
+          generatedCaptions={generatedCaptions}
+          setGeneratedCaptions={setGeneratedCaptions}
+        />
+      </div>
+      {isLoading && <VideoUploadSpinner />}
+    </>
+  );
+};
+
+// File: features/video/containers/VidCaptionVideoContainer.tsx
+"use client";
+
+import React, { useState } from "react";
+import { UploadVideoContainer } from "./UploadVideoContainer";
+import { VidCaptionVideoContainerHeader } from "../components";
+import { GeneratedVideoContainer } from "./GeneratedVideoContainer";
+
+export const VidCaptionVideoContainer = () => {
+  const [uploadedVideo, setUploadedVideo] = useState<File | null>(null);
+  const [generatedVideo, setGeneratedVideo] = useState<Blob | null>(null);
+
+  return (
+    <div className="flex flex-col px-8 py-6 m-4 sm:m-8 rounded-lg border border-tiktok-light-gray shadow">
+      {/* Header */}
+      <VidCaptionVideoContainerHeader />
+
+      {!generatedVideo && (
+        <UploadVideoContainer
+          uploadedVideo={uploadedVideo}
+          setUploadedVideo={setUploadedVideo}
+          setGeneratedVideo={setGeneratedVideo}
+        />
+      )}
+
+      {uploadedVideo && generatedVideo && (
+        <GeneratedVideoContainer
+          originalVideo={uploadedVideo}
+          generatedVideo={generatedVideo}
+        />
+      )}
+    </div>
+  );
+};
+
+// File: features/video/containers/index.ts
+export { VidCaptionVideoContainer } from "./VidCaptionVideoContainer";
+
+// File: features/video/schemas/index.ts
+export type { VideoUploadResponseSchema } from "./response";
+
+// File: features/video/schemas/response.ts
+export interface VideoUploadResponseSchema {
+  captions: string;
+}
+
