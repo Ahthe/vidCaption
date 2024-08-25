@@ -1,3 +1,4 @@
+// File: common/components/Button.tsx
 import React from "react";
 
 export interface ButtonProps
@@ -27,11 +28,11 @@ export const Button = (props: ButtonProps) => {
   switch (variant) {
     case "primary":
       variantStyle =
-        "bg-tiktok-primary text-white font-bold hover:bg-tiktok-primary-hover";
+        "bg-tiktok-primary text-white font-bold hover:bg-tiktok-primaryHover";
       break;
     case "outline":
       variantStyle =
-        "border border-gray-200 font-bold text-tiktok-black hover:text-white hover:bg-tiktok-primary hover-border-tiktok-primary";
+        "border border-matteBlackBorder font-bold text-matteBlackText hover:text-white hover:bg-tiktok-primary hover:border-tiktok-primary";
       break;
   }
 
