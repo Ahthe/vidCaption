@@ -13,3 +13,8 @@ def extract_audio():
     stream = ffmpeg.output(stream, extracted_audio)
     ffmpeg.run(stream, overwrite_output=True)
     return extracted_audio
+
+def run():
+
+    extracted_audio = extract_audio()
+run()
