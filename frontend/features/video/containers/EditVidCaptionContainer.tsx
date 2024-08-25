@@ -27,8 +27,6 @@ export const EditVidCaptionContainer = (props: EditVidCaptionContainerProps) => 
 
   const [isSignToSpeechFeatureSelected, setIsSignToSpeechFeatureSelected] =
     useState(false);
-  const [isSignToEmojiFeatureSelected, setIsSignToEmojiFeatureSelected] =
-    useState(false);
 
   const handleOnConfirmVidCaptionGeneration = async () => {
     if (!uploadedVideo) return toast.error("Please upload a video!");
@@ -39,9 +37,6 @@ export const EditVidCaptionContainer = (props: EditVidCaptionContainerProps) => 
     const features = {
       sign_to_speech: {
         selected: isSignToSpeechFeatureSelected,
-      },
-      sign_to_emoji: {
-        selected: isSignToEmojiFeatureSelected,
       },
     };
     const formData = new FormData();

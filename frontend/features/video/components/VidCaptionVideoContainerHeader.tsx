@@ -27,8 +27,6 @@ export const VidCaptionVideoContainerHeader = () => {
   //     </div>
   //     <div>
   //       <div>1. Speech-to-Text 📑</div>
-  //       <div>2. Speech-to-Speech 🔊</div>
-  //       <div>3. Speech-to-Emoji 👋🏻</div>
   //     </div>
   //   </div>
   // );
