@@ -21,7 +21,7 @@ export const VidCaptionFeatureCheckbox = (props: VidCaptionFeatureCheckboxProps)
         onClick={() => setIsSelected((prev) => !prev)}
       >
         <div
-          className={`flex justify-center items-center w-4 h-4 rounded-sm border border-red ${isSelected && "bg-red"}`}
+          className={`flex justify-center items-center w-4 h-4 rounded-sm border border-tiktok-red ${isSelected && "bg-tiktok-red"}`}
         >
           {isSelected && <FaCheck className="text-white w-3 h-3" />}
         </div>
@@ -30,7 +30,7 @@ export const VidCaptionFeatureCheckbox = (props: VidCaptionFeatureCheckboxProps)
 
       {/* Description */}
       {selectedDescription && isSelected && (
-        <div className="text-red text-[14px]">
+        <div className="text-tiktok-red text-[14px]">
           *{selectedDescription}
         </div>
       )}

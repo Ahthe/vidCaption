@@ -74,11 +74,11 @@ export const Button = (props: ButtonProps) => {
   switch (variant) {
     case "primary":
       variantStyle =
-        "bg-primary text-white font-bold hover:bg-primary-hover";
+        "bg-tiktok-primary text-white font-bold hover:bg-tiktok-primary-hover";
       break;
     case "outline":
       variantStyle =
-        "border border-gray-200 font-bold text-black hover:text-white hover:bg-primary hover-border-primary";
+        "border border-gray-200 font-bold text-tiktok-black hover:text-white hover:bg-tiktok-primary hover-border-tiktok-primary";
       break;
   }
 
@@ -370,7 +370,7 @@ export const FeaturesSection = () => {
 const FeaturesSectionHeader = () => {
   return (
     <>
-      <div className="font-bold text-[24px] text-red mb-2">
+      <div className="font-bold text-[24px] text-tiktok-red mb-2">
         VidCaption Accessibility Features
       </div>
       <div className="max-w-[750px] mb-24 flex flex-col gap-2">
@@ -381,12 +381,12 @@ const FeaturesSectionHeader = () => {
         </div>
         <div>
           These feature enhances accessibility for&nbsp;
-          <span className="text-red">Social media content creators</span>,
+          <span className="text-tiktok-red">Social media content creators</span>,
           ensuring they can create video content with animated captions&nbsp;
-          <span className="text-red">Social Media audience</span>. Hence
+          <span className="text-tiktok-red">Social Media audience</span>. Hence
           allowing, the audience to follow the video&apos;s content more
           easily&nbsp;
-          <span className="text-red">
+          <span className="text-tiktok-red">
             and saving the content creators time in adding captions manually
           </span>
           .
@@ -506,7 +506,7 @@ const HeroDescriptionSubtitle = () => {
 const HeroDescriptionTitle = () => {
   return (
     <div className="flex flex-col font-black text-[36px] sm:text-[42px] lg:text-[48px] mt-4">
-      <span className="text-red">Video Captioning</span>
+      <span className="text-tiktok-red">Video Captioning</span>
       <span className="-translate-y-0 sm:-translate-y-2">
         using AI
       </span>
@@ -521,7 +521,7 @@ const HeroDescriptionCTA = () => {
         Add captions to your videos with&nbsp;
         <Link
           href="/"
-          className="font-bold text-blue underline underline-offset-2 cursor-pointer"
+          className="font-bold text-tiktok-blue underline underline-offset-2 cursor-pointer"
         >
           vidCaption&apos;s AI-powered
         </Link>
@@ -551,7 +551,7 @@ const HeroNavArrow = () => {
   return (
     <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
       <FaArrowDown
-        className="w-6 h-6 text-primary cursor-pointer animate-pulse hover:animate-none hover:scale-125 transition-all"
+        className="w-6 h-6 text-tiktok-primary cursor-pointer animate-pulse hover:animate-none hover:scale-125 transition-all"
         onClick={() => {
           window.scrollTo({
             top: window.innerHeight - 70,
@@ -670,7 +670,7 @@ import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
   return (
-    <nav className="sticky top-0 z-50 flex flex-row items-center justify-between px-4 py-4 sm:px-6 sm:py-4 border-b border-b-light-gray bg-white shadow-sm">
+    <nav className="sticky top-0 z-50 flex flex-row items-center justify-between px-4 py-4 sm:px-6 sm:py-4 border-b border-b-tiktok-light-gray bg-white shadow-sm">
       <NavbarLogo />
       <NavbarLinks />
     </nav>
@@ -704,7 +704,7 @@ export const VidCaptionFeatureCheckbox = (props: VidCaptionFeatureCheckboxProps)
         onClick={() => setIsSelected((prev) => !prev)}
       >
         <div
-          className={`flex justify-center items-center w-4 h-4 rounded-sm border border-red ${isSelected && "bg-red"}`}
+          className={`flex justify-center items-center w-4 h-4 rounded-sm border border-tiktok-red ${isSelected && "bg-tiktok-red"}`}
         >
           {isSelected && <FaCheck className="text-white w-3 h-3" />}
         </div>
@@ -713,7 +713,7 @@ export const VidCaptionFeatureCheckbox = (props: VidCaptionFeatureCheckboxProps)
 
       {/* Description */}
       {selectedDescription && isSelected && (
-        <div className="text-red text-[14px]">
+        <div className="text-tiktok-red text-[14px]">
           *{selectedDescription}
         </div>
       )}
@@ -728,9 +728,9 @@ export const VidCaptionVideoContainerHeader = () => {
   return (
     <div className="flex flex-col gap-1 mb-8">
       <div className="font-bold text-[24px]">
-        Upload Video <span className="text-red">(VidCaption)</span>
+        Upload Video <span className="text-tiktok-red">(VidCaption)</span>
       </div>
-      <div className="text-gray">
+      <div className="text-tiktok-gray">
         Create subttiles for your videos with VidCaptions&apos;s AI-powered caption generation.
       </div>
     </div>
@@ -739,13 +739,13 @@ export const VidCaptionVideoContainerHeader = () => {
   // Old
   // return (
   //   <div className="max-w-[500px] text-center flex flex-col gap-2 mb-8">
-  //     <div className="font-bold text-red text-[36px] md:text-[48px]">
+  //     <div className="font-bold text-tiktok-red text-[36px] md:text-[48px]">
   //       VidCaption
   //     </div>
   //     <div>
   //       Create subttiles for your videos with
   //       animations easily with&nbsp;
-  //       <span className="text-red font-bold">
+  //       <span className="text-tiktok-red font-bold">
   //         VidCaption&apos;s AI-powered caption generation.
   //       </span>
   //     </div>
@@ -846,12 +846,12 @@ export const VideoInput = (props: VideoInputProps) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full sm:w-max rounded-md transition border-2 border-gray-300 border-dashed hover:border-red focus:outline-none appearance-none cursor-pointer my-[10px] px-6 py-8">
+    <div className="flex flex-col justify-center items-center w-full sm:w-max rounded-md transition border-2 border-gray-300 border-dashed hover:border-tiktok-red focus:outline-none appearance-none cursor-pointer my-[10px] px-6 py-8">
       <label className="cursor-pointer">
         <div className="flex flex-col items-center text-center">
-          <MdCloudUpload className="text-gray h-[36px] w-[36px]" />
+          <MdCloudUpload className="text-tiktok-gray h-[36px] w-[36px]" />
           <div className="font-bold mt-2">Select video to upload</div>
-          <div className="flex flex-col gap-1 items-center text-gray text-[14px] mt-4">
+          <div className="flex flex-col gap-1 items-center text-tiktok-gray text-[14px] mt-4">
             <span>MP4</span>
             <span>720x1280 resolution or higher</span>
             <span>Up to 5 minutes</span>
@@ -872,14 +872,14 @@ export const VideoInput = (props: VideoInputProps) => {
 
       {/* Error Message */}
       {uploadedVideo && (
-        <div className="mt-4 text-[14px] text-red max-w-[180px] text-center">
+        <div className="mt-4 text-[14px] text-tiktok-red max-w-[180px] text-center">
           File: {uploadedVideo.name}
         </div>
       )}
 
       {/* Error Message */}
       {errorMessage && (
-        <div className="mt-4 text-[14px] text-red font-bold max-w-[180px] text-center">
+        <div className="mt-4 text-[14px] text-tiktok-red font-bold max-w-[180px] text-center">
           {errorMessage}
         </div>
       )}
@@ -904,12 +904,12 @@ import { FaSpinner } from "react-icons/fa6";
 export const VideoUploadSpinner = () => {
   return (
     <>
-      <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-light-gray opacity-60"></div>
+      <div className="absolute top-0 left-0 z-50 w-screen h-screen bg-tiktok-light-gray opacity-60"></div>
       <div className="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-4">
-        <span className="text-red font-bold animate-pulse">
+        <span className="text-tiktok-red font-bold animate-pulse">
           Uploading file and generating captions...
         </span>
-        <FaSpinner className="text-[32px] text-red animate-spin" />
+        <FaSpinner className="text-[32px] text-tiktok-red animate-spin" />
       </div>
     </>
   );
@@ -994,7 +994,7 @@ export const EditVidCaptionContainer = (props: EditVidCaptionContainerProps) => 
       {/* Captions */}
       <div className="flex flex-col gap-1">
         <div className="font-bold text-[18px]">Generated Captions</div>
-        <div className="text-gray text-[14px]">
+        <div className="text-tiktok-gray text-[14px]">
           Please check the auto-generated captions from Speech detected
           in the video (Please keep the formatting the same).
         </div>
@@ -1175,7 +1175,7 @@ export const VidCaptionVideoContainer = () => {
   const [generatedVideo, setGeneratedVideo] = useState<Blob | null>(null);
 
   return (
-    <div className="flex flex-col px-8 py-6 m-4 sm:m-8 rounded-lg border border-light-gray shadow">
+    <div className="flex flex-col px-8 py-6 m-4 sm:m-8 rounded-lg border border-tiktok-light-gray shadow">
       {/* Header */}
       <VidCaptionVideoContainerHeader />
 

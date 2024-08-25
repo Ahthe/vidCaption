@@ -28,11 +28,11 @@ export const Button = (props: ButtonProps) => {
   switch (variant) {
     case "primary":
       variantStyle =
-        "bg-primary text-white font-bold hover:bg-primaryHover";
+        "bg-tiktok-primary text-white font-bold hover:bg-tiktok-primaryHover";
       break;
     case "outline":
       variantStyle =
-        "border border-matteBlackBorder font-bold text-matteBlackText hover:text-white hover:bg-primary hover:border-primary";
+        "border border-matteBlackBorder font-bold text-matteBlackText hover:text-white hover:bg-tiktok-primary hover:border-tiktok-primary";
       break;
   }
 
