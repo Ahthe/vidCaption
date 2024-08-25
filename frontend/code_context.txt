@@ -279,21 +279,6 @@ export const serverDomainUrl =
     ? process.env.NEXT_PUBLIC_PRODUCTION_SERVER_URL
     : "http://127.0.0.1:8000";
 
-// File: features/landing-page/components/CommitmentSection.tsx
-import React from "react";
-
-export const CommitmentSection = () => {
-  return (
-    <div className="px-6 md:px-24 flex flex-col items-center mb-12">
-      <div className="font-bold text-center text-[36px] md:text-[64px] mb-2">
-        
-      </div>
-      <div>
-        
-      </div>
-    </div>
-  );
-};
 
 // File: features/landing-page/components/FeaturesSection.tsx
 import { Button } from "@common/components";
@@ -570,19 +555,17 @@ const HeroNavArrow = () => {
 
 // File: features/landing-page/components/index.ts
 export { Hero } from "./Hero";
-export { CommitmentSection } from "./CommitmentSection";
 export { FeaturesSection } from "./FeaturesSection";
 
 // File: features/landing-page/containers/LandingPageContainer.tsx
 import React from "react";
-import { Hero, CommitmentSection, FeaturesSection } from "../components";
+import { Hero, FeaturesSection } from "../components";
 
 export const LandingPageContainer = () => {
   return (
     <div className="flex justify-center">
       <div className="max-w-[1500px]">
         <Hero />
-        <CommitmentSection />
         <FeaturesSection />
       </div>
     </div>
